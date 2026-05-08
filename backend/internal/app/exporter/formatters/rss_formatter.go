@@ -8,7 +8,16 @@ import (
 	"github.com/potibm/funkapparat/internal/app/domain"
 )
 
-type AnnouncementRssFormatter struct {
+type FeedFormat string
+
+const (
+	RSSFormat  FeedFormat = "rss"
+	JSONFormat FeedFormat = "json"
+	AtomFormat FeedFormat = "atom"
+)
+
+type FeedFormatter struct {
+	Feedtype        FeedFormat
 	FeedTitle       string
 	FeedLink        string
 	FeedDescription string
@@ -16,7 +25,7 @@ type AnnouncementRssFormatter struct {
 	AuthorEmail     string
 }
 
-func NewAnnouncementRssFormatter(title, description, link, authorName, authorEmail string) *AnnouncementRssFormatter {
+func NewFeedFormatter(feedtype FeedFormat, title, description, link, authorName, authorEmail string) *FeedFormatter {
 	if title == "" {
 		title = "Party Announcements"
 	}
@@ -25,7 +34,8 @@ func NewAnnouncementRssFormatter(title, description, link, authorName, authorEma
 		link = "https://news.scene.org"
 	}
 
-	return &AnnouncementRssFormatter{
+	return &FeedFormatter{
+		Feedtype:        feedtype,
 		FeedTitle:       title,
 		FeedLink:        link,
 		FeedDescription: description,
@@ -34,11 +44,18 @@ func NewAnnouncementRssFormatter(title, description, link, authorName, authorEma
 	}
 }
 
-func (f *AnnouncementRssFormatter) Extension() string {
-	return ".xml"
+func (f *FeedFormatter) Extension() string {
+	switch f.Feedtype {
+	case JSONFormat:
+		return ".json"
+	case AtomFormat:
+		return ".atom"
+	default:
+		return ".xml"
+	}
 }
 
-func (f *AnnouncementRssFormatter) Format(announcements domain.AnnouncementList) ([]byte, error) {
+func (f *FeedFormatter) Format(announcements domain.AnnouncementList) ([]byte, error) {
 	feed := &feeds.Feed{
 		Title:       f.FeedTitle,
 		Link:        &feeds.Link{Href: f.FeedLink},
@@ -72,10 +89,22 @@ func (f *AnnouncementRssFormatter) Format(announcements domain.AnnouncementList)
 		feed.Items = append(feed.Items, item)
 	}
 
-	rssString, err := feed.ToRss()
+	resultString := ""
+
+	var err error
+
+	switch f.Feedtype {
+	case JSONFormat:
+		resultString, err = feed.ToJSON()
+	case AtomFormat:
+		resultString, err = feed.ToAtom()
+	default:
+		resultString, err = feed.ToRss()
+	}
+
 	if err != nil {
 		return nil, err
 	}
 
-	return []byte(rssString), nil
+	return []byte(resultString), nil
 }

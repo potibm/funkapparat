@@ -15,7 +15,7 @@ import (
 func BootstrapExporters(
 	ctx context.Context,
 	version string,
-	rssConfig *config.RSSConfig,
+	feedConfig *config.FeedConfig,
 	configs []config.ExporterConfig,
 	s3Client *s3.Client,
 	baseLog *slog.Logger,
@@ -28,17 +28,18 @@ func BootstrapExporters(
 		var f exporter.Formatter
 
 		switch cfg.Type {
-		case "rss":
-			if rssConfig == nil {
-				return nil, fmt.Errorf("exporter %s requires rss config", cfg.Name)
+		case "rss", "json", "atom":
+			if feedConfig == nil {
+				return nil, fmt.Errorf("exporter %s requires a feed config", cfg.Name)
 			}
 
-			f = formatters.NewAnnouncementRssFormatter(
-				rssConfig.FeedTitle,
-				rssConfig.FeedDescription,
-				rssConfig.FeedLink,
-				rssConfig.AuthorName,
-				rssConfig.AuthorEmail,
+			f = formatters.NewFeedFormatter(
+				formatters.FeedFormat(cfg.Type),
+				feedConfig.FeedTitle,
+				feedConfig.FeedDescription,
+				feedConfig.FeedLink,
+				feedConfig.AuthorName,
+				feedConfig.AuthorEmail,
 			)
 
 			slog.Info("Configured RSS exporter", "name", cfg.Name)

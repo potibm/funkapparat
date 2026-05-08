@@ -24,7 +24,7 @@ func TestConfig_PlaylistDefaultsAndValidation(t *testing.T) {
 			Environment:             "development",
 			Version:                 "1.2.3",
 		},
-		RSS: &RSSConfig{
+		Feed: &FeedConfig{
 			FeedTitle:       "My RSS Feed",
 			FeedLink:        "https://news.example.com",
 			FeedDescription: "Latest announcements",

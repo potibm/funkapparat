@@ -46,7 +46,7 @@ type S3ClientConfig struct {
 	UsePathStyle    bool   `mapstructure:"use_path_style"`
 }
 
-type RSSConfig struct {
+type FeedConfig struct {
 	FeedTitle       string `mapstructure:"feed_title"`
 	FeedLink        string `mapstructure:"feed_link"`
 	FeedDescription string `mapstructure:"feed_description"`
@@ -59,5 +59,5 @@ type Config struct {
 	Sentry   SentryConfig     `mapstructure:"sentry"`
 	Exporter []ExporterConfig `mapstructure:"exporter"`
 	S3Client *S3ClientConfig  `mapstructure:"s3_client"`
-	RSS      *RSSConfig       `mapstructure:"rss"`
+	Feed     *FeedConfig      `mapstructure:"feed"`
 }
