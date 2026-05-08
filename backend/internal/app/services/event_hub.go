@@ -6,16 +6,14 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/potibm/billedapparat/internal/app/domain"
-	"github.com/potibm/billedapparat/internal/app/exporter"
+	"github.com/potibm/funkapparat/internal/app/domain"
+	"github.com/potibm/funkapparat/internal/app/exporter"
 	"github.com/redis/go-redis/v9"
 )
 
 type ScheduleSource interface {
-	GetByCategoryID(ctx context.Context, categoryID int64) ([]domain.ScheduleEntry, error)
-	GetByLocationID(ctx context.Context, locationID int64) ([]domain.ScheduleEntry, error)
-	GetAllPreloaded(ctx context.Context) (domain.TimeTable, error)
-	GetByID(ctx context.Context, id int64) (*domain.ScheduleEntry, error)
+	GetAll(ctx context.Context) (domain.AnnouncementList, error)
+	GetByID(ctx context.Context, id int64) (*domain.Announcement, error)
 }
 
 type EventHub struct {
@@ -38,18 +36,18 @@ func NewEventHub(e *exporter.Manager, redisClient *redis.Client, repo ScheduleSo
 
 func (h *EventHub) Publish(ctx context.Context, entryID int64, action ActionType) {
 	if h.redis != nil {
-		var eventDTO ScheduleEventDTO
+		var eventDTO AnnouncementEventDTO
 
 		if action == ActionDelete {
-			eventDTO = ScheduleEventDTO{
+			eventDTO = AnnouncementEventDTO{
 				Action:    action,
 				Timestamp: time.Now().Unix(),
-				Payload:   ScheduleEntryDTO{ID: entryID},
+				Payload:   AnnouncementDTO{ID: entryID},
 			}
 		} else {
 			entry, err := h.repo.GetByID(ctx, entryID)
 			if err != nil {
-				h.logger.Error("Failed to fetch schedule entry", "id", entryID, "error", err)
+				h.logger.Error("Failed to fetch announcement", "id", entryID, "error", err)
 
 				return
 			}
@@ -68,42 +66,22 @@ func (h *EventHub) PublishFullSync(ctx context.Context) {
 		return
 	}
 
-	timetable, err := h.repo.GetAllPreloaded(ctx)
+	timetable, err := h.repo.GetAll(ctx)
 	if err != nil {
-		h.logger.Error("Failed to fetch timetable for sync", "error", err)
+		h.logger.Error("Failed to fetch all announcements for sync", "error", err)
 
 		return
 	}
 
-	syncEvent := ScheduleSyncEventDTO{
+	syncEvent := AnnouncementSyncEventDTO{
 		Action:    ActionSync,
 		Timestamp: time.Now().Unix(),
-		Payload:   mapToTimeTableDTO(timetable),
+		Payload:   mapToAnnouncementListDTO(timetable),
 	}
 
 	h.sendToStream(ctx, syncEvent)
 
 	h.logger.Info("Sent full state sync event to Redis", "count", len(syncEvent.Payload))
-}
-
-func (h *EventHub) SyncCategoryUpdate(ctx context.Context, catID int64) {
-	entries, _ := h.repo.GetByCategoryID(ctx, catID)
-
-	for _, entry := range entries {
-		h.Publish(ctx, entry.ID, "updated")
-	}
-
-	h.exporter.Ping()
-}
-
-func (h *EventHub) SyncLocationUpdate(ctx context.Context, locationID int64) {
-	entries, _ := h.repo.GetByLocationID(ctx, locationID)
-
-	for _, entry := range entries {
-		h.Publish(ctx, entry.ID, "updated")
-	}
-
-	h.exporter.Ping()
 }
 
 func (h *EventHub) sendToStream(ctx context.Context, data interface{}) {
@@ -115,7 +93,7 @@ func (h *EventHub) sendToStream(ctx context.Context, data interface{}) {
 	}
 
 	err = h.redis.XAdd(ctx, &redis.XAddArgs{
-		Stream: "party:schedule:events",
+		Stream: "party:news:events",
 		Values: map[string]interface{}{"data": jsonData},
 	}).Err()
 	if err != nil {

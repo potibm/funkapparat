@@ -6,30 +6,30 @@ import (
 	"sync"
 	"time"
 
-	"github.com/potibm/billedapparat/internal/app/domain"
+	"github.com/potibm/funkapparat/internal/app/domain"
 )
 
 const defaultTimeout = 30 * time.Second
 
 type Exporter interface {
 	Name() string
-	Export(ctx context.Context, timetable domain.TimeTable) error
+	Export(ctx context.Context, announcements domain.AnnouncementList) error
 }
 
 type Manager struct {
 	exporters    []Exporter
-	db           AllPreloader // Interface to fetch fresh data from the database
+	db           AllLoader
 	debounceTime time.Duration
 	timer        *time.Timer
 	mu           sync.Mutex
 	logger       *slog.Logger
 }
 
-type AllPreloader interface {
-	GetAllPreloaded(ctx context.Context) (domain.TimeTable, error)
+type AllLoader interface {
+	GetAll(ctx context.Context) (domain.AnnouncementList, error)
 }
 
-func NewManager(source AllPreloader, debounce time.Duration) *Manager {
+func NewManager(source AllLoader, debounce time.Duration) *Manager {
 	logger := slog.Default()
 
 	return &Manager{
@@ -64,9 +64,9 @@ func (m *Manager) RunAll() {
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
 	defer cancel()
 
-	timetable, err := m.db.GetAllPreloaded(ctx)
+	announcements, err := m.db.GetAll(ctx)
 	if err != nil {
-		m.logger.Error("Error fetching timetable", "error", err)
+		m.logger.Error("Error fetching announcements", "error", err)
 
 		return
 	}
@@ -80,7 +80,7 @@ func (m *Manager) RunAll() {
 
 			m.logger.Info("Starting", "exporter", exp.Name())
 
-			if err := exp.Export(ctx, timetable); err != nil {
+			if err := exp.Export(ctx, announcements); err != nil {
 				m.logger.Error("Failed", "exporter", exp.Name(), "error", err)
 			} else {
 				m.logger.Info("Finished successfully", "exporter", exp.Name())

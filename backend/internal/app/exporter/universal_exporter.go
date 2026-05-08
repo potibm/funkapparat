@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/potibm/billedapparat/internal/app/domain"
+	"github.com/potibm/funkapparat/internal/app/domain"
 )
 
 type UniversalExporter struct {
@@ -27,7 +27,7 @@ func NewUniversalExporter(name, filename string, f Formatter, w Writer, l *slog.
 
 func (e *UniversalExporter) Name() string { return e.name }
 
-func (e *UniversalExporter) Export(ctx context.Context, entries domain.TimeTable) error {
+func (e *UniversalExporter) Export(ctx context.Context, entries domain.AnnouncementList) error {
 	e.logger.Info("Starting export run", "entry_count", len(entries))
 
 	data, err := e.formatter.Format(entries)

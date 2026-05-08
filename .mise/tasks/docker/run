@@ -5,7 +5,7 @@ set -e
 
 
 PORT="3103"
-CONTAINER_NAME="tidsapparat:latest"
+CONTAINER_NAME="funkapparat:latest"
 
 if ! docker image inspect $CONTAINER_NAME >/dev/null 2>&1; then \
     echo "❌ Docker image '$CONTAINER_NAME' not found. Please run 'mise run docker:build' first."; \

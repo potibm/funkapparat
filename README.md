@@ -4,7 +4,7 @@
 
 > _Funkapparat_ is a Danish term for radio set.
 
-It is a editor for news and annoucements at [demoparties](https://en.wikipedia.org/wiki/Demoscene#Parties). Can be used in conjunction with [billedapparat](https://github.com/potibm/billedapparat).
+It is a editor for news and announcements at [demoparties](https://en.wikipedia.org/wiki/Demoscene#Parties). Can be used in conjunction with [billedapparat](https://github.com/potibm/billedapparat).
 
 ## Tooling
 

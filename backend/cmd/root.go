@@ -12,8 +12,8 @@ import (
 
 	"github.com/go-viper/mapstructure/v2"
 	"github.com/joho/godotenv"
-	"github.com/potibm/billedapparat/internal/app/config"
-	"github.com/potibm/billedapparat/internal/app/initializer"
+	"github.com/potibm/funkapparat/internal/app/config"
+	"github.com/potibm/funkapparat/internal/app/initializer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -30,8 +30,8 @@ const (
 )
 
 var rootCmd = &cobra.Command{
-	Use:           "tidsapparat",
-	Short:         "A timetable editor for demoparties.",
+	Use:           "funkapparat",
+	Short:         "An editor for news and announcements at demoparties.",
 	Version:       Version,
 	SilenceUsage:  true,
 	SilenceErrors: true,
@@ -91,7 +91,7 @@ func Execute() error {
 	rootCmd.PersistentFlags().String(logFormatFlagName, "json", "Log Format (json, text)")
 	_ = viper.BindPFlag("app.log_format", rootCmd.PersistentFlags().Lookup(logFormatFlagName))
 
-	rootCmd.PersistentFlags().String(databaseFileFlagName, "billedapparat.db", "Dateiname der SQLite Datenbank")
+	rootCmd.PersistentFlags().String(databaseFileFlagName, "funkapparat", "Filename of the SQLite database")
 	_ = viper.BindPFlag("app.db_filename", rootCmd.PersistentFlags().Lookup(databaseFileFlagName))
 
 	rootCmd.AddCommand(NewServeCmd())
@@ -162,11 +162,11 @@ func skipConfigValidation(cmd *cobra.Command) bool {
 		return true
 	}
 
-	if strings.HasPrefix(cmdPath, "tidsapparat completion") {
+	if strings.HasPrefix(cmdPath, "funkapparat completion") {
 		return true
 	}
 
-	if strings.HasPrefix(cmdPath, "tidsapparat help") {
+	if strings.HasPrefix(cmdPath, "funkapparat help") {
 		return true
 	}
 

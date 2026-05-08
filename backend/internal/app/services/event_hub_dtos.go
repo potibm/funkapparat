@@ -3,7 +3,7 @@ package services
 import (
 	"time"
 
-	"github.com/potibm/billedapparat/internal/app/domain"
+	"github.com/potibm/funkapparat/internal/app/domain"
 )
 
 type ActionType string
@@ -15,77 +15,50 @@ const (
 	ActionSync   ActionType = "sync"
 )
 
-type ScheduleSyncEventDTO struct {
-	Action    ActionType         `json:"action"`
-	Timestamp int64              `json:"timestamp"`
-	Payload   []ScheduleEntryDTO `json:"payload"`
+type AnnouncementSyncEventDTO struct {
+	Action    ActionType        `json:"action"`
+	Timestamp int64             `json:"timestamp"`
+	Payload   []AnnouncementDTO `json:"payload"`
 }
 
-type ScheduleEventDTO struct {
-	Action    ActionType       `json:"action"`
-	Timestamp int64            `json:"timestamp"`
-	Payload   ScheduleEntryDTO `json:"payload"`
+type AnnouncementEventDTO struct {
+	Action    ActionType      `json:"action"`
+	Timestamp int64           `json:"timestamp"`
+	Payload   AnnouncementDTO `json:"payload"`
 }
 
-type ScheduleEntryDTO struct {
-	ID          int64        `json:"id"`
-	Title       string       `json:"title"`
-	Description string       `json:"description"`
-	StartTime   string       `json:"start_time"` // RFC3339
-	EndTime     string       `json:"end_time"`   // RFC3339
-	Category    *CategoryDTO `json:"category,omitempty"`
-	Location    *LocationDTO `json:"location,omitempty"`
+type AnnouncementDTO struct {
+	ID          int64  `json:"id"`
+	Title       string `json:"title"`
+	Body        string `json:"body"`
+	IsUrgent    bool   `json:"is_urgent"`
+	ExternalURL string `json:"external_url,omitempty"`
+	IsHidden    bool   `json:"is_hidden"`
 }
 
-type CategoryDTO struct {
-	Name  string `json:"name"`
-	Color string `json:"color"`
-}
-
-type LocationDTO struct {
-	Name    string `json:"name"`
-	Address string `json:"address,omitempty"`
-}
-
-func mapToEntryDTO(entry *domain.ScheduleEntry) ScheduleEntryDTO {
-	dto := ScheduleEntryDTO{
+func mapToEntryDTO(entry *domain.Announcement) AnnouncementDTO {
+	dto := AnnouncementDTO{
 		ID:          entry.ID,
 		Title:       entry.Title,
-		Description: entry.Description,
-		StartTime:   entry.StartTime.Format(time.RFC3339),
-		EndTime:     entry.EndTime.Format(time.RFC3339),
-	}
-
-	if entry.Category != nil {
-		dto.Category = &CategoryDTO{
-			Name:  entry.Category.Name,
-			Color: entry.Category.Color,
-		}
-	}
-
-	if entry.Location != nil {
-		dto.Location = &LocationDTO{
-			Name: entry.Location.Name,
-		}
-
-		if entry.Location.Address != nil && *entry.Location.Address != "" {
-			dto.Location.Address = *entry.Location.Address
-		}
+		Body:        entry.Body,
+		IsUrgent:    entry.IsUrgent,
+		ExternalURL: entry.ExternalURL,
+		IsHidden:    entry.IsHidden,
 	}
 
 	return dto
 }
 
-func mapToEventDTO(entry *domain.ScheduleEntry, action ActionType) ScheduleEventDTO {
-	return ScheduleEventDTO{
+func mapToEventDTO(entry *domain.Announcement, action ActionType) AnnouncementEventDTO {
+	return AnnouncementEventDTO{
 		Action:    action,
 		Timestamp: time.Now().Unix(),
 		Payload:   mapToEntryDTO(entry),
 	}
 }
 
-func mapToTimeTableDTO(entries domain.TimeTable) []ScheduleEntryDTO {
-	dtos := make([]ScheduleEntryDTO, 0, len(entries))
+func mapToAnnouncementListDTO(entries domain.AnnouncementList) []AnnouncementDTO {
+	dtos := make([]AnnouncementDTO, 0, len(entries))
 	for _, entry := range entries {
 		dtos = append(dtos, mapToEntryDTO(entry))
 	}

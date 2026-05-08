@@ -8,8 +8,8 @@ const __dirname = path.resolve();
 
 const frontendPort = process.env.E2E_PORT
   ? Number.parseInt(process.env.E2E_PORT)
-  : 3200;
-const backendTarget = process.env.E2E_API_TARGET || "http://127.0.0.1:3201";
+  : 3300;
+const backendTarget = process.env.E2E_API_TARGET || "http://127.0.0.1:3301";
 
 export default defineConfig({
   plugins: [react(), basicSsl()],

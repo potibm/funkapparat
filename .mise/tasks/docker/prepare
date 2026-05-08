@@ -4,11 +4,11 @@
 
 set -e 
 
-if ! docker buildx inspect tidsapparat-builder >/dev/null 2>&1; then
-    echo "🔧 Creating buildx builder 'tidsapparat-builder'..."
-    docker buildx create --name tidsapparat-builder --use --bootstrap
+if ! docker buildx inspect funkapparat-builder >/dev/null 2>&1; then
+    echo "🔧 Creating buildx builder 'funkapparat-builder'..."
+    docker buildx create --name funkapparat-builder --use --bootstrap
 else
-    echo "✅ Using existing buildx builder 'tidsapparat-builder'"
-    docker buildx use tidsapparat-builder
+    echo "✅ Using existing buildx builder 'funkapparat-builder'"
+    docker buildx use funkapparat-builder
     docker buildx inspect --bootstrap > /dev/null
 fi

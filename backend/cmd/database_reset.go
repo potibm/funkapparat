@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/potibm/billedapparat/internal/app/seeder"
-	store "github.com/potibm/billedapparat/internal/app/store/gorm"
+	"github.com/potibm/funkapparat/internal/app/seeder"
+	store "github.com/potibm/funkapparat/internal/app/store/gorm"
 	"github.com/spf13/cobra"
 )
 
@@ -107,7 +107,7 @@ func seedDatabase() error {
 		}
 	}()
 
-	s := seeder.NewSeeder(dbStore.NewScheduleEntryRepository())
+	s := seeder.NewSeeder(dbStore.NewAnnoucementRepository())
 	if err := s.Run(); err != nil {
 		return fmt.Errorf("seeding error: %w", err)
 	}

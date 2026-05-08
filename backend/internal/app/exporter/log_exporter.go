@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/potibm/billedapparat/internal/app/domain"
+	"github.com/potibm/funkapparat/internal/app/domain"
 )
 
 type LogExporter struct{}
@@ -17,19 +17,14 @@ func (e *LogExporter) Name() string {
 	return "LogExporter"
 }
 
-func (e *LogExporter) Export(ctx context.Context, entries domain.TimeTable) error {
-	slog.Info("Exporting timetable to log", "count", len(entries))
+func (e *LogExporter) Export(ctx context.Context, entries domain.AnnouncementList) error {
+	slog.Info("Exporting announcements to log", "count", len(entries))
 
 	for _, entry := range entries {
-		locName := "N/A"
-		if entry.Location != nil {
-			locName = entry.Location.Name
-		}
-
-		slog.Debug("Schedule Entry",
+		slog.Debug("Annoucement Entry",
+			"id", entry.ID,
 			"title", entry.Title,
-			"location", locName,
-			"start", entry.StartTime)
+		)
 	}
 
 	return nil

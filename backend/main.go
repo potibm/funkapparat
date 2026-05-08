@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/potibm/billedapparat/cmd"
+	"github.com/potibm/funkapparat/cmd"
 )
 
 func startup() int {

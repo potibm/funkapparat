@@ -9,12 +9,12 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/potibm/billedapparat/internal/app/exporter"
-	"github.com/potibm/billedapparat/internal/app/hub"
-	"github.com/potibm/billedapparat/internal/app/initializer"
-	"github.com/potibm/billedapparat/internal/app/repository"
-	"github.com/potibm/billedapparat/internal/app/services"
-	store "github.com/potibm/billedapparat/internal/app/store/gorm"
+	"github.com/potibm/funkapparat/internal/app/exporter"
+	"github.com/potibm/funkapparat/internal/app/hub"
+	"github.com/potibm/funkapparat/internal/app/initializer"
+	"github.com/potibm/funkapparat/internal/app/repository"
+	"github.com/potibm/funkapparat/internal/app/services"
+	store "github.com/potibm/funkapparat/internal/app/store/gorm"
 )
 
 //go:embed assets
@@ -33,7 +33,7 @@ var (
 func NewServeCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "serve",
-		Short: "Runs the HTTP server for the Billedapparat application",
+		Short: "Runs the HTTP server for the Funkapparat application",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return ensureAppInfrastructure()
 		},
@@ -69,7 +69,7 @@ func NewServeCmd() *cobra.Command {
 				}
 			}()
 
-			scheduleRepo := dbStore.NewScheduleEntryRepository()
+			announcementRepo := dbStore.NewAnnoucementRepository()
 
 			redisClient := initializer.InitializeRedis(Cfg.App.RedisURL)
 
@@ -77,7 +77,7 @@ func NewServeCmd() *cobra.Command {
 			// PHASE 3: Background Tasks (Exporters & Hub)
 			// =========================================================================
 
-			exportMgr, err := setupExportManager(ctx, scheduleRepo, logger)
+			exportMgr, err := setupExportManager(ctx, announcementRepo, logger)
 			if err != nil {
 				return err
 			}
@@ -89,7 +89,7 @@ func NewServeCmd() *cobra.Command {
 
 			slog.Info("Performing initial boot sync...")
 
-			eventHub := services.NewEventHub(exportMgr, redisClient, scheduleRepo)
+			eventHub := services.NewEventHub(exportMgr, redisClient, announcementRepo)
 			eventHub.PublishFullSync(ctx)
 
 			// =========================================================================
@@ -97,13 +97,11 @@ func NewServeCmd() *cobra.Command {
 			// =========================================================================
 
 			server, err := hub.NewServer(hub.Config{
-				Port:              port,
-				StaticFiles:       staticFiles,
-				ScheduleEntryRepo: scheduleRepo,
-				CategoryRepo:      dbStore.NewCategoryRepository(),
-				LocationRepo:      dbStore.NewLocationRepository(),
-				EventHub:          eventHub,
-				Cfg:               Cfg,
+				Port:             port,
+				StaticFiles:      staticFiles,
+				AnnouncementRepo: announcementRepo,
+				EventHub:         eventHub,
+				Cfg:              Cfg,
 			})
 			if err != nil {
 				return fmt.Errorf("failed to initialize server: %w", err)
@@ -122,7 +120,7 @@ func NewServeCmd() *cobra.Command {
 
 func setupExportManager(
 	ctx context.Context,
-	repo repository.ScheduleEntryRepository,
+	repo repository.AnnouncementRepository,
 	logger *slog.Logger,
 ) (*exporter.Manager, error) {
 	exportMgr := exporter.NewManager(repo, defaultDebounceDuration)

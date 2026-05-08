@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	OtelServiceName        = "tidsapparat"
+	OtelServiceName        = "funkapparat"
 	OtelBackendServiceName = OtelServiceName + "-backend"
 
 	DefaultTraceSampleRate         = 0.1
@@ -16,7 +16,7 @@ const (
 
 	DataDirname = "./data"
 
-	DefaultDBFilename = "tidsapparat"
+	DefaultDBFilename = "funkapparat"
 
 	DataDirPerm = 0o755
 )

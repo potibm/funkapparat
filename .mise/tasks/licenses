@@ -9,7 +9,7 @@ echo "🔍 Scanning for backend dependencies (Go)..."
 BACKEND_ROWS=$(cd backend && go-licenses csv ./... --ignore github.com/potibm  | sed 's/"//g' | awk -F, '{print "| " $1 " | [" $3 "](" $2 ") |"}')
 
 echo "🔍 Scanning for frontend dependencies (NPM)..."
-FRONTEND_ROWS=$(cd frontend && npx license-checker-rseidelsohn --excludePackages "tidsapparat" --csv | tail -n +2 | sed 's/"//g' | awk -F, '{print "| " $1 " | [" $2 "](" $3 ") |"}')
+FRONTEND_ROWS=$(cd frontend && npx license-checker-rseidelsohn --excludePackages "funkapparat" --csv | tail -n +2 | sed 's/"//g' | awk -F, '{print "| " $1 " | [" $2 "](" $3 ") |"}')
 
 echo "🖨️ Writing to ${FILEPATH}..."
 cat << EOF > "$FILEPATH"
@@ -33,7 +33,7 @@ $FRONTEND_ROWS
 
 | Package | License |
 | --- | --- |
-| Logo Icon "Calendar Heart" by [Phosphor Icons](https://phosphoricons.com)  | [MIT](https://github.com/phosphor-icons/homepage/blob/master/LICENSE) |
+| Logo Icon "Cell Tower" by [Phosphor Icons](https://phosphoricons.com)  | [MIT](https://github.com/phosphor-icons/homepage/blob/master/LICENSE) |
 
 
 EOF

@@ -7,7 +7,7 @@ import (
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 
-	"github.com/potibm/billedapparat/internal/app/config"
+	"github.com/potibm/funkapparat/internal/app/config"
 )
 
 type Store struct {
@@ -15,9 +15,7 @@ type Store struct {
 }
 
 var allModels = []interface{}{
-	&dbScheduleEntry{},
-	&dbCategory{},
-	&dbLocation{},
+	&dbAnnouncement{},
 }
 
 func NewSqliteStore(filename string) (*Store, error) {

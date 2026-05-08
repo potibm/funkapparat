@@ -14,43 +14,35 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"github.com/potibm/billedapparat/internal/app/config"
-	"github.com/potibm/billedapparat/internal/app/repository"
-	"github.com/potibm/billedapparat/internal/app/services"
+	"github.com/potibm/funkapparat/internal/app/config"
+	"github.com/potibm/funkapparat/internal/app/repository"
+	"github.com/potibm/funkapparat/internal/app/services"
 	sloggin "github.com/samber/slog-gin"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 const (
-	defaultShutdownTimeout    = 5 * time.Second
-	defaultReadHeaderTimeout  = 3 * time.Second
-	pathScheduleEntries       = "/schedule-entries"
-	pathScheduleEntriesWithID = "/schedule-entries/:id"
-	pathCategories            = "/categories"
-	pathCategoriesWithID      = "/categories/:id"
-	pathLocations             = "/locations"
-	pathLocationsWithID       = "/locations/:id"
+	defaultShutdownTimeout   = 5 * time.Second
+	defaultReadHeaderTimeout = 3 * time.Second
+	pathAnnouncements        = "/announcements"
+	pathAnnouncementsWithID  = "/announcements/:id"
 )
 
 type Config struct {
-	Port              int
-	StaticFiles       embed.FS
-	ScheduleEntryRepo repository.ScheduleEntryRepository
-	CategoryRepo      repository.CategoryRepository
-	LocationRepo      repository.LocationRepository
-	EventHub          *services.EventHub
-	Cfg               config.Config
+	Port             int
+	StaticFiles      embed.FS
+	AnnouncementRepo repository.AnnouncementRepository
+	EventHub         *services.EventHub
+	Cfg              config.Config
 }
 
 type Server struct {
-	port              int
-	staticFiles       embed.FS
-	eventHub          *services.EventHub
-	scheduleEntryRepo repository.ScheduleEntryRepository
-	categoryRepo      repository.CategoryRepository
-	locationRepo      repository.LocationRepository
-	cfg               config.Config
-	logger            *slog.Logger
+	port             int
+	staticFiles      embed.FS
+	eventHub         *services.EventHub
+	announcementRepo repository.AnnouncementRepository
+	cfg              config.Config
+	logger           *slog.Logger
 }
 
 func NewServer(cfg Config) (*Server, error) {
@@ -61,14 +53,12 @@ func NewServer(cfg Config) (*Server, error) {
 	}
 
 	return &Server{
-		port:              cfg.Port,
-		staticFiles:       cfg.StaticFiles,
-		scheduleEntryRepo: cfg.ScheduleEntryRepo,
-		categoryRepo:      cfg.CategoryRepo,
-		locationRepo:      cfg.LocationRepo,
-		cfg:               cfg.Cfg,
-		eventHub:          cfg.EventHub,
-		logger:            logger.With("component", "HubServer"),
+		port:             cfg.Port,
+		staticFiles:      cfg.StaticFiles,
+		announcementRepo: cfg.AnnouncementRepo,
+		cfg:              cfg.Cfg,
+		eventHub:         cfg.EventHub,
+		logger:           logger.With("component", "HubServer"),
 	}, nil
 }
 
@@ -130,23 +120,11 @@ func (s *Server) setupRouter() (*gin.Engine, error) {
 	api.GET("/config", s.handleGetPublicConfig)
 
 	admin := r.Group("/api/admin")
-	admin.GET(pathScheduleEntries, s.listScheduleEntries)
-	admin.POST(pathScheduleEntries, s.createScheduleEntry)
-	admin.GET(pathScheduleEntriesWithID, s.getScheduleEntry)
-	admin.PUT(pathScheduleEntriesWithID, s.updateScheduleEntry)
-	admin.DELETE(pathScheduleEntriesWithID, s.deleteScheduleEntry)
-
-	admin.GET(pathCategories, s.listCategories)
-	admin.POST(pathCategories, s.createCategory)
-	admin.GET(pathCategoriesWithID, s.getCategory)
-	admin.PUT(pathCategoriesWithID, s.updateCategory)
-	admin.DELETE(pathCategoriesWithID, s.deleteCategory)
-
-	admin.GET(pathLocations, s.listLocations)
-	admin.POST(pathLocations, s.createLocation)
-	admin.GET(pathLocationsWithID, s.getLocation)
-	admin.PUT(pathLocationsWithID, s.updateLocation)
-	admin.DELETE(pathLocationsWithID, s.deleteLocation)
+	admin.GET(pathAnnouncements, s.listAnnouncements)
+	admin.POST(pathAnnouncements, s.createAnnouncement)
+	admin.GET(pathAnnouncementsWithID, s.getAnnouncement)
+	admin.PUT(pathAnnouncementsWithID, s.updateAnnouncement)
+	admin.DELETE(pathAnnouncementsWithID, s.deleteAnnouncement)
 
 	r.NoRoute(func(c *gin.Context) {
 		if !strings.HasPrefix(c.Request.RequestURI, "/api") && !strings.Contains(c.Request.RequestURI, ".") {

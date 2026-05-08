@@ -26,7 +26,7 @@ COPY backend .
 COPY --from=frontend-build /app/frontend/build ./cmd/assets
 
 ARG VERSION=dev
-RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags "-X github.com/potibm/tidsapparat/cmd.Version=${VERSION}" -o tidsapparat .
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags "-X github.com/potibm/funkapparat/cmd.Version=${VERSION}" -o funkapparat .
 
 # ==========================================
 # Create the final image
@@ -41,10 +41,10 @@ RUN apk update --no-cache && \
 RUN mkdir -p /app/data && chown -R appuser:appuser /app
 
 # Copy backend build
-COPY --from=backend-build --chown=appuser:appuser /app/backend/tidsapparat ./tidsapparat
+COPY --from=backend-build --chown=appuser:appuser /app/backend/funkapparat ./funkapparat
 COPY THIRD-PARTY-NOTICES.md /app/THIRD-PARTY-NOTICES.md
 
-RUN chmod +x /app/tidsapparat
+RUN chmod +x /app/funkapparat
 
 USER appuser
 
@@ -52,5 +52,5 @@ VOLUME [ "/app/data" ]
 
 EXPOSE 8080
 
-ENTRYPOINT ["/app/tidsapparat"]
+ENTRYPOINT ["/app/funkapparat"]
 CMD ["serve"]

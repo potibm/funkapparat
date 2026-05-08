@@ -28,7 +28,7 @@ jobs:
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
           images: ${{ env.IMAGE_NAME }}
-          bake-target: tidsapparat
+          bake-target: funkapparat
           tags: |
             type=ref,event=tag,prefix=,suffix=
             type=semver,pattern={{version}}
@@ -62,19 +62,19 @@ jobs:
             cwd://${{ steps.meta.outputs.bake-file-labels }}
             cwd://${{ steps.meta.outputs.bake-file-annotations }}
           push: true
-          targets: tidsapparat
+          targets: funkapparat
           set: |
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
-            tidsapparat.args.VERSION=${{ steps.meta.outputs.version }}
-            tidsapparat.args.BUILD_DATE=${{ steps.builddate.outputs.value }}            
-            tidsapparat.labels.org.opencontainers.image.version=${{ steps.meta.outputs.version }}
-            tidsapparat.labels.org.opencontainers.image.created=${{ steps.builddate.outputs.value }}
-            tidsapparat.labels.org.opencontainers.image.description=A timetable editor for demoparties.
-            tidsapparat.labels.org.opencontainers.image.title=Tidsapparat
-            tidsapparat.labels.org.opencontainers.image.licenses=MIT
-            tidsapparat.annotations=index,manifest:org.opencontainers.image.version=${{ steps.meta.outputs.version }}
-            tidsapparat.annotations=index,manifest:org.opencontainers.image.created=${{ steps.builddate.outputs.value }}
+            funkapparat.args.VERSION=${{ steps.meta.outputs.version }}
+            funkapparat.args.BUILD_DATE=${{ steps.builddate.outputs.value }}            
+            funkapparat.labels.org.opencontainers.image.version=${{ steps.meta.outputs.version }}
+            funkapparat.labels.org.opencontainers.image.created=${{ steps.builddate.outputs.value }}
+            funkapparat.labels.org.opencontainers.image.description=An editor for news and announcements at demoparties.
+            funkapparat.labels.org.opencontainers.image.title=Funkapparat
+            funkapparat.labels.org.opencontainers.image.licenses=MIT
+            funkapparat.annotations=index,manifest:org.opencontainers.image.version=${{ steps.meta.outputs.version }}
+            funkapparat.annotations=index,manifest:org.opencontainers.image.created=${{ steps.builddate.outputs.value }}
 
       - name: Get digest
         id: digest
@@ -116,10 +116,10 @@ jobs:
                 --arg built_at "${{ steps.builddate.outputs.value }}" \
                 '{
                   description: "Image built and signed via GitHub Actions",
-                  project: "tidsapparat",
+                  project: "funkapparat",
                   version: $version,
                   built_at: $built_at,
-                  repository: "https://github.com/potibm/tidsapparat"
+                  repository: "https://github.com/potibm/funkapparat"
                 }' > description.json
           cosign attest --yes \
             --predicate description.json \

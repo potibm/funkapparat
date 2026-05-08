@@ -16,7 +16,7 @@ if [ "$CLEAN_MODE" = "true" ]; then
     EXTRA_FLAGS=("--pull" "--no-cache")
 fi
 
-echo "🚀 Building Docker image 'tidsapparat'..."
+echo "🚀 Building Docker image 'funkapparat'..."
 
 VERSION="0.0.$(date +%y%m%d%H%M)"
 BUILD_DATE=$(date -Iseconds)
@@ -25,13 +25,13 @@ echo "📦 Version: $VERSION"
 echo "📅 Build Date: $BUILD_DATE"
 
 docker buildx build \
-    --builder tidsapparat-builder \
+    --builder funkapparat-builder \
     --build-arg VERSION="$VERSION" \
     --build-arg BUILD_DATE="$BUILD_DATE" \
-    --tag tidsapparat:latest \
-    --tag "tidsapparat:$VERSION" \
+    --tag funkapparat:latest \
+    --tag "funkapparat:$VERSION" \
     "${EXTRA_FLAGS[@]}" \
     --load \
     .
 
-echo "✅ Docker image 'tidsapparat:latest' built successfully!"
+echo "✅ Docker image 'funkapparat:latest' built successfully!"

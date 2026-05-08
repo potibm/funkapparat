@@ -7,10 +7,13 @@ export const MyTheme: ThemeOptions = {
     ...defaultTheme.palette,
     mode: "light",
     primary: {
-      main: "#3B82F6",
+      // Ein sehr dunkles Schiefergrau für perfekte Lesbarkeit auf hellem Grund
+      main: "#1E293B",
+      contrastText: "#FFFFFF",
     },
     secondary: {
-      main: "#BF00FF",
+      // Ein klares, technisches Blau als Sekundärfarbe
+      main: "#3B82F6",
       contrastText: "#FFFFFF",
     },
     background: {
@@ -24,6 +27,15 @@ export const MyTheme: ThemeOptions = {
   },
   components: {
     ...defaultTheme.components,
+    // HIER SETZEN WIR DEN AKZENT FÜR DEN LIGHT MODE
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#CCFF00", // Der knallige Limetten-Header
+          color: "#000000", // Schwarzer Text/Icons im Header für den Kontrast
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -42,12 +54,13 @@ export const MyDarkTheme: ThemeOptions = {
     ...defaultTheme.palette,
     mode: "dark",
     primary: {
-      main: "#BF00FF",
-      light: "#D946EF",
-      dark: "#9300C4",
-      contrastText: "#FFFFFF",
+      main: "#CCFF00", // Limette als Hauptfarbe im Dark Mode
+      light: "#D9FF33",
+      dark: "#99CC00",
+      contrastText: "#000000", // WICHTIG: Schwarzer Text auf den Limetten-Buttons
     },
     secondary: {
+      // Violett ist weg. Wir nutzen ein strahlendes Cyan als Kontrast zur Limette
       main: "#00E5FF",
       contrastText: "#000000",
     },
@@ -81,15 +94,15 @@ export const MyDarkTheme: ThemeOptions = {
     MuiChip: {
       styleOverrides: {
         filledPrimary: {
-          backgroundColor: "#BF00FF",
-          color: "#FFFFFF",
+          backgroundColor: "#CCFF00",
+          color: "#000000",
         },
         root: {
           backgroundColor: "rgba(15, 23, 42, 0.6)",
-          border: "1px solid rgba(191, 0, 255, 0.5)",
+          border: "1px solid rgba(204, 255, 0, 0.3)", // Dezent limettengrüner Rand
         },
         label: {
-          color: "#E066FF",
+          color: "#CCFF00", // Limettengrüner Text
         },
       },
     },

@@ -29,7 +29,7 @@ export const MyAppBar = (props: AppBarProps) => (
           marginRight: "10em",
         }}
       >
-        Tidsapparat
+        Funkapparat
       </Typography>
       <TitlePortal />
     </Box>

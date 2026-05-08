@@ -4,8 +4,8 @@ import (
 	"log/slog"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/potibm/billedapparat/internal/app/domain"
-	"github.com/potibm/billedapparat/internal/app/repository"
+	"github.com/potibm/funkapparat/internal/app/domain"
+	"github.com/potibm/funkapparat/internal/app/repository"
 )
 
 const (
@@ -15,16 +15,16 @@ const (
 )
 
 type Seeder struct {
-	scheduleEntries []domain.ScheduleEntry
-	currentID       int64
-	repo            repository.ScheduleEntryRepository
+	annoucenments []domain.Announcement
+	currentID     int64
+	repo          repository.AnnouncementRepository
 }
 
-func NewSeeder(repo repository.ScheduleEntryRepository) *Seeder {
+func NewSeeder(repo repository.AnnouncementRepository) *Seeder {
 	return &Seeder{
-		scheduleEntries: []domain.ScheduleEntry{},
-		currentID:       0,
-		repo:            repo,
+		annoucenments: []domain.Announcement{},
+		currentID:     0,
+		repo:          repo,
 	}
 }
 

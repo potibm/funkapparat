@@ -6,10 +6,9 @@ import (
 	"log/slog"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/potibm/billedapparat/internal/app/config"
-	"github.com/potibm/billedapparat/internal/app/exporter"
-	"github.com/potibm/billedapparat/internal/app/exporter/formatters"
-	"github.com/potibm/billedapparat/internal/app/exporter/writers"
+	"github.com/potibm/funkapparat/internal/app/config"
+	"github.com/potibm/funkapparat/internal/app/exporter"
+	"github.com/potibm/funkapparat/internal/app/exporter/writers"
 )
 
 func BootstrapExporters(
@@ -28,12 +27,7 @@ func BootstrapExporters(
 		var f exporter.Formatter
 
 		switch cfg.Type {
-		case "ical":
-			f = formatters.NewIcalFormatter(
-				"-//Tidsapparat//Schedule "+version+"//EN",
-				partyCfg.Timezone,
-				partyCfg.DefaultAddress,
-			)
+		case "rss":
 		default:
 			baseLog.Error("Unknown exporter type", "type", cfg.Type)
 
