@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/potibm/funkapparat/internal/app/domain"
 	"github.com/potibm/funkapparat/internal/app/repository"
-	"github.com/potibm/funkapparat/internal/app/services"
 )
 
 func (s *Server) listAnnouncements(c *gin.Context) {
@@ -60,7 +59,7 @@ func (s *Server) createAnnouncement(c *gin.Context) {
 
 		return
 	} else {
-		s.eventHub.Publish(c, announcement.ID, services.ActionCreate)
+		s.eventHub.PublishCreate(c, announcement.ID)
 
 		slog.Info("Create Announcement: Successfully created announcement", "id", announcement.ID)
 	}
@@ -91,7 +90,7 @@ func (s *Server) updateAnnouncement(c *gin.Context) {
 
 		return
 	} else {
-		s.eventHub.Publish(c, announcement.ID, services.ActionUpdate)
+		s.eventHub.PublishUpdate(c, announcement.ID)
 
 		slog.Info("Update Announcement: Successfully updated announcement", "id", id)
 	}
@@ -113,7 +112,7 @@ func (s *Server) deleteAnnouncement(c *gin.Context) {
 		return
 	}
 
-	s.eventHub.Publish(c, id, services.ActionDelete)
+	s.eventHub.PublishDelete(c, id)
 
 	c.JSON(http.StatusOK, gin.H{"id": id})
 }

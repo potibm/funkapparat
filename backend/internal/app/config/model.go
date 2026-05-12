@@ -38,13 +38,6 @@ type ExporterConfig struct {
 
 type CorsAllowOriginsConfig []string
 
-type PartyConfig struct {
-	Timezone       string `mapstructure:"timezone"        validate:"required"`
-	DefaultAddress string `mapstructure:"default_address"`
-	StartDate      string `mapstructure:"start_date"      validate:"required,datetime=2006-01-02"`
-	EndDate        string `mapstructure:"end_date"        validate:"required,datetime=2006-01-02"`
-}
-
 type S3ClientConfig struct {
 	AccessKeyID     string `mapstructure:"access_key_id"     validate:"required"`
 	SecretAccessKey string `mapstructure:"secret_access_key" validate:"required"`
@@ -53,10 +46,18 @@ type S3ClientConfig struct {
 	UsePathStyle    bool   `mapstructure:"use_path_style"`
 }
 
+type FeedConfig struct {
+	FeedTitle       string `mapstructure:"feed_title"`
+	FeedLink        string `mapstructure:"feed_link"`
+	FeedDescription string `mapstructure:"feed_description"`
+	AuthorName      string `mapstructure:"author_name"`
+	AuthorEmail     string `mapstructure:"author_email"     validate:"omitempty,email"`
+}
+
 type Config struct {
 	App      AppConfig        `mapstructure:"app"`
 	Sentry   SentryConfig     `mapstructure:"sentry"`
 	Exporter []ExporterConfig `mapstructure:"exporter"`
-	Party    PartyConfig      `mapstructure:"party"`
 	S3Client *S3ClientConfig  `mapstructure:"s3_client"`
+	Feed     *FeedConfig      `mapstructure:"feed"`
 }

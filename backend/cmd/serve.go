@@ -138,7 +138,7 @@ func setupExportManager(
 	exporters, err := initializer.BootstrapExporters(
 		ctx,
 		Cfg.App.Version,
-		Cfg.Party,
+		Cfg.Feed,
 		Cfg.Exporter,
 		s3Client,
 		logger,

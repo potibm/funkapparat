@@ -8,13 +8,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/potibm/funkapparat/internal/app/config"
 	"github.com/potibm/funkapparat/internal/app/exporter"
+	"github.com/potibm/funkapparat/internal/app/exporter/formatters"
 	"github.com/potibm/funkapparat/internal/app/exporter/writers"
 )
 
 func BootstrapExporters(
 	ctx context.Context,
 	version string,
-	partyCfg config.PartyConfig,
+	feedConfig *config.FeedConfig,
 	configs []config.ExporterConfig,
 	s3Client *s3.Client,
 	baseLog *slog.Logger,
@@ -27,7 +28,21 @@ func BootstrapExporters(
 		var f exporter.Formatter
 
 		switch cfg.Type {
-		case "rss":
+		case "rss", "json", "atom":
+			if feedConfig == nil {
+				return nil, fmt.Errorf("exporter %s requires a feed config", cfg.Name)
+			}
+
+			f = formatters.NewFeedFormatter(
+				formatters.FeedFormat(cfg.Type),
+				feedConfig.FeedTitle,
+				feedConfig.FeedDescription,
+				feedConfig.FeedLink,
+				feedConfig.AuthorName,
+				feedConfig.AuthorEmail,
+			)
+
+			slog.Info("Configured RSS exporter", "name", cfg.Name)
 		default:
 			baseLog.Error("Unknown exporter type", "type", cfg.Type)
 
