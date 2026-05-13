@@ -2,7 +2,6 @@ package initializer
 
 import (
 	"context"
-	"io"
 	"log/slog"
 	"testing"
 
