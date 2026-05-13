@@ -40,4 +40,4 @@ mise run dev
 
 ## Documentation
 
-Please refer to the [configuration documentation](doc/configuration.md). Further information will be added soon.
+Please refer to the [configuration](doc/configuration.md) and [sync](doc/sync.md) documentation. Further information will be added soon.
