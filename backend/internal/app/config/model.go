@@ -29,11 +29,12 @@ type AppConfig struct {
 }
 
 type ExporterConfig struct {
-	Name        string            `mapstructure:"name"`
-	Type        string            `mapstructure:"type"`
-	Destination string            `mapstructure:"destination"`
-	Filename    string            `mapstructure:"filename"`
+	Name        string            `mapstructure:"name"        validate:"required"`
+	Type        string            `mapstructure:"type"        validate:"required,oneof=rss,json,atom"`
+	Destination string            `mapstructure:"destination" validate:"required,oneof=s3 file"`
+	Filename    string            `mapstructure:"filename"    validate:"required"`
 	Options     map[string]string `mapstructure:"options"`
+	Enabled     bool              `mapstructure:"enabled"`
 }
 
 type CorsAllowOriginsConfig []string

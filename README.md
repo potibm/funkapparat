@@ -40,4 +40,4 @@ mise run dev
 
 ## Documentation
 
-_todo_
+Please refer to the [configuration documentation](doc/configuration.md). Further information will be added soon.
