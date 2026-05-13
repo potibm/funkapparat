@@ -10,5 +10,5 @@ Simply add `app.redis_url` to your config, e.g., `redis://localhost:3351/0`.
 
 ### Protocol
 
-The events (sync, create, update, delete) will be according to the news-schema defined in the[Protokolapparat repository](https://github.com/potibm/protokolapparat).
+The events (sync, create, update, delete) will be according to the news-schema defined in the [Protokolapparat repository](https://github.com/potibm/protokolapparat).
 
