@@ -80,6 +80,9 @@ linters:
       - path: '.*/.*_repository\.go$'
         linters:
           - dupl
+      - path: '.*/seeder/seeder\.go$'
+        linters:
+          - mnd
 formatters:
   enable:
     - golines
