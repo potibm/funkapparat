@@ -7,13 +7,13 @@ The application can be configured in multiple ways. This includes CLI parameters
 They are processed in the following order:
 
 - CLI parameters
-- environment variables
-- config file
-- defaults.
-
+- Environment variables
+- Config file
+- Defaults.
+  
 ### CLI Parameters
 
-You can call the funkapparat serve command with the following flags
+You can call the `funkapparat serve` command with the following flags
 
 ```
 -p, --port          int             # the port for the server
@@ -72,9 +72,9 @@ When you are using an exporter that writes to s3, you need to configure it accor
 `````
 s3_client:
     access_key_id: accesskey
+    secret_access_key: secretkey
     endpoint: http://localhost:9000
     region: us-east-1
-    secret_access_key: secretkey
     use_path_style: true
 `````
 
@@ -93,6 +93,20 @@ format:
 ````
 
 The date options are according to the documentation at https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options.
+
+#### sentry
+
+When using Sentry, provide the project specific DSN and further information here:
+
+`````
+sentry:
+    dsn: ""
+    environment: production
+    replay_error_sample_rate: 0.1
+    replay_session_sample_rate: 0.1
+    trace_sample_rate: 0.1
+    version: dev
+`````
 
 ## Environment
 
