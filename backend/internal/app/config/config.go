@@ -21,6 +21,12 @@ const (
 	DataDirPerm = 0o755
 )
 
+var DefaultDateOptions = DateFormatOptionsConfig{
+	"weekday": "short",
+	"hour":    "2-digit",
+	"minute":  "2-digit",
+}
+
 func InitViper() {
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -32,6 +38,9 @@ func InitViper() {
 	viper.SetDefault("app.frontend_url", "")
 	viper.SetDefault("app.cors_allow_origins", []string{})
 	viper.SetDefault("app.redis_url", "")
+
+	viper.SetDefault("format.date.locale", "da-DK")
+	viper.SetDefault("format.date.options", DefaultDateOptions)
 
 	viper.SetDefault("sentry.dsn", "")
 	viper.SetDefault("sentry.trace_sample_rate", DefaultTraceSampleRate)

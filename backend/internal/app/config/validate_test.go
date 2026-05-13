@@ -31,6 +31,15 @@ func TestConfig_PlaylistDefaultsAndValidation(t *testing.T) {
 			AuthorName:      "John Doe",
 			AuthorEmail:     "john.doe@example.com",
 		},
+		Format: FormatConfig{
+			Date: DateFormatConfig{
+				Locale: "en-US",
+				Options: DateFormatOptionsConfig{
+					"weekday": "long",
+					"hour":    "2-digit",
+				},
+			},
+		},
 	}
 
 	// 1. trigger validation

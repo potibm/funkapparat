@@ -54,9 +54,21 @@ type FeedConfig struct {
 	AuthorEmail     string `mapstructure:"author_email"     validate:"omitempty,email"`
 }
 
+type DateFormatOptionsConfig map[string]any
+
+type DateFormatConfig struct {
+	Locale  string                  `json:"locale"  mapstructure:"locale"  validate:"required"`
+	Options DateFormatOptionsConfig `json:"options" mapstructure:"options"`
+}
+
+type FormatConfig struct {
+	Date DateFormatConfig `json:"date" mapstructure:"date"`
+}
+
 type Config struct {
 	App      AppConfig        `mapstructure:"app"`
 	Sentry   SentryConfig     `mapstructure:"sentry"`
+	Format   FormatConfig     `mapstructure:"format"`
 	Exporter []ExporterConfig `mapstructure:"exporter"`
 	S3Client *S3ClientConfig  `mapstructure:"s3_client"`
 	Feed     *FeedConfig      `mapstructure:"feed"`

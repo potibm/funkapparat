@@ -23,12 +23,32 @@ func (c *Config) Validate() error {
 		return err
 	}
 
+	if err := c.Format.Validate(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (f *AppConfig) Validate() error {
 	if !validDbFilename.MatchString(f.DbFilename) {
 		return fmt.Errorf("db_filename '%s' contains invalid characters", f.DbFilename)
+	}
+
+	if err := f.RedisURL.Validate(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (f *FormatConfig) Validate() error {
+	return f.Date.Validate()
+}
+
+func (f *DateFormatConfig) Validate() error {
+	if !validLocale.MatchString(f.Locale) {
+		return fmt.Errorf("date_locale '%s' is not a valid locale", f.Locale)
 	}
 
 	return nil
