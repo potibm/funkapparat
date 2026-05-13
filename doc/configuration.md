@@ -46,7 +46,7 @@ app:
     frontend_url: https://localhost:3300
     log_format: json
     log_level: info
-    redis_url: "redis://pass@localhost:3305"
+    redis_url: "redis://localhost:6379/0"
 ````
 
 #### exporter
