@@ -8,10 +8,12 @@ import (
 )
 
 type AppConfigPublic struct {
-	Version            string              `json:"version"`
-	Environment        string              `json:"environment"`
-	EnvironmentMessage string              `json:"environment_message"`
-	Sentry             config.SentryConfig `json:"sentry"`
+	Version            string                         `json:"version"`
+	Environment        string                         `json:"environment"`
+	EnvironmentMessage string                         `json:"environment_message"`
+	DateLocale         string                         `json:"date_locale"`
+	DateOptions        config.DateFormatOptionsConfig `json:"date_options"`
+	Sentry             config.SentryConfig            `json:"sentry"`
 }
 
 func (s *Server) handleGetPublicConfig(c *gin.Context) {
@@ -26,5 +28,7 @@ func mapToPublicConfig(cfg *config.Config) AppConfigPublic {
 		Environment:        cfg.App.Environment,
 		EnvironmentMessage: cfg.App.EnvironmentMessage,
 		Sentry:             cfg.Sentry,
+		DateLocale:         cfg.Format.Date.Locale,
+		DateOptions:        cfg.Format.Date.Options,
 	}
 }

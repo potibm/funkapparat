@@ -29,11 +29,12 @@ type AppConfig struct {
 }
 
 type ExporterConfig struct {
-	Name        string            `mapstructure:"name"`
-	Type        string            `mapstructure:"type"`
-	Destination string            `mapstructure:"destination"`
-	Filename    string            `mapstructure:"filename"`
+	Name        string            `mapstructure:"name"        validate:"required"`
+	Type        string            `mapstructure:"type"        validate:"required,oneof=rss json atom"`
+	Destination string            `mapstructure:"destination" validate:"required,oneof=s3 file"`
+	Filename    string            `mapstructure:"filename"    validate:"required"`
 	Options     map[string]string `mapstructure:"options"`
+	Enabled     bool              `mapstructure:"enabled"`
 }
 
 type CorsAllowOriginsConfig []string
@@ -54,9 +55,21 @@ type FeedConfig struct {
 	AuthorEmail     string `mapstructure:"author_email"     validate:"omitempty,email"`
 }
 
+type DateFormatOptionsConfig map[string]any
+
+type DateFormatConfig struct {
+	Locale  string                  `json:"locale"  mapstructure:"locale"  validate:"required"`
+	Options DateFormatOptionsConfig `json:"options" mapstructure:"options"`
+}
+
+type FormatConfig struct {
+	Date DateFormatConfig `json:"date" mapstructure:"date"`
+}
+
 type Config struct {
 	App      AppConfig        `mapstructure:"app"`
 	Sentry   SentryConfig     `mapstructure:"sentry"`
+	Format   FormatConfig     `mapstructure:"format"`
 	Exporter []ExporterConfig `mapstructure:"exporter"`
 	S3Client *S3ClientConfig  `mapstructure:"s3_client"`
 	Feed     *FeedConfig      `mapstructure:"feed"`

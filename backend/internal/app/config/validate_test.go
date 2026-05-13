@@ -31,6 +31,15 @@ func TestConfig_PlaylistDefaultsAndValidation(t *testing.T) {
 			AuthorName:      "John Doe",
 			AuthorEmail:     "john.doe@example.com",
 		},
+		Format: FormatConfig{
+			Date: DateFormatConfig{
+				Locale: "en-US",
+				Options: DateFormatOptionsConfig{
+					"weekday": "long",
+					"hour":    "2-digit",
+				},
+			},
+		},
 	}
 
 	// 1. trigger validation
@@ -54,4 +63,299 @@ func TestAppConfig_Validate(t *testing.T) {
 	cfg.DbFilename = "../invalid-filename"
 	err = cfg.Validate()
 	assert.Error(t, err)
+}
+
+func TestConfig_Validate(t *testing.T) {
+	t.Run("valid config", func(t *testing.T) {
+		cfg := &Config{
+			App: AppConfig{
+				GinMode:     "debug",
+				Environment: "development",
+				LogLevel:    "info",
+				LogFormat:   "text",
+				DbFilename:  "test.db",
+				FrontendURL: "http://localhost:3000",
+			},
+			Sentry: SentryConfig{
+				Environment: "development",
+				Version:     "1.0.0",
+			},
+			Format: FormatConfig{
+				Date: DateFormatConfig{
+					Locale:  "en-US",
+					Options: DateFormatOptionsConfig{},
+				},
+			},
+		}
+		assert.NoError(t, cfg.Validate())
+	})
+
+	t.Run("missing required fields", func(t *testing.T) {
+		cfg := &Config{}
+		err := cfg.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid configuration")
+	})
+
+	t.Run("invalid app config", func(t *testing.T) {
+		cfg := &Config{
+			App: AppConfig{
+				GinMode:     "debug",
+				Environment: "development",
+				LogLevel:    "info",
+				LogFormat:   "text",
+				DbFilename:  "../invalid",
+				FrontendURL: "http://localhost:3000",
+			},
+			Sentry: SentryConfig{
+				Environment: "development",
+				Version:     "1.0.0",
+			},
+			Format: FormatConfig{
+				Date: DateFormatConfig{
+					Locale:  "en-US",
+					Options: DateFormatOptionsConfig{},
+				},
+			},
+		}
+		err := cfg.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "db_filename")
+	})
+
+	t.Run("invalid format config", func(t *testing.T) {
+		cfg := &Config{
+			App: AppConfig{
+				GinMode:     "debug",
+				Environment: "development",
+				LogLevel:    "info",
+				LogFormat:   "text",
+				DbFilename:  "test.db",
+				FrontendURL: "http://localhost:3000",
+			},
+			Sentry: SentryConfig{
+				Environment: "development",
+				Version:     "1.0.0",
+			},
+			Format: FormatConfig{
+				Date: DateFormatConfig{
+					Locale:  "invalid-locale",
+					Options: DateFormatOptionsConfig{},
+				},
+			},
+		}
+		err := cfg.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "date_locale")
+	})
+}
+
+func TestAppConfig_Validate_Extended(t *testing.T) {
+	t.Run("valid config", func(t *testing.T) {
+		cfg := AppConfig{
+			GinMode:     "debug",
+			Environment: "development",
+			LogLevel:    "info",
+			LogFormat:   "text",
+			DbFilename:  "test.db",
+			FrontendURL: "http://localhost:3000",
+		}
+		assert.NoError(t, cfg.Validate())
+	})
+
+	t.Run("invalid db filename with path traversal", func(t *testing.T) {
+		cfg := AppConfig{
+			GinMode:     "debug",
+			Environment: "development",
+			LogLevel:    "info",
+			LogFormat:   "text",
+			DbFilename:  "../etc/passwd",
+			FrontendURL: "http://localhost:3000",
+		}
+		err := cfg.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "db_filename")
+	})
+
+	t.Run("invalid db filename with special chars", func(t *testing.T) {
+		cfg := AppConfig{
+			GinMode:     "debug",
+			Environment: "development",
+			LogLevel:    "info",
+			LogFormat:   "text",
+			DbFilename:  "test@db",
+			FrontendURL: "http://localhost:3000",
+		}
+		err := cfg.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "db_filename")
+	})
+
+	t.Run("valid redis url", func(t *testing.T) {
+		cfg := AppConfig{
+			GinMode:     "debug",
+			Environment: "development",
+			LogLevel:    "info",
+			LogFormat:   "text",
+			DbFilename:  "test.db",
+			FrontendURL: "http://localhost:3000",
+			RedisURL:    "redis://localhost:6379/0",
+		}
+		assert.NoError(t, cfg.Validate())
+	})
+
+	t.Run("empty redis url is valid", func(t *testing.T) {
+		cfg := AppConfig{
+			GinMode:     "debug",
+			Environment: "development",
+			LogLevel:    "info",
+			LogFormat:   "text",
+			DbFilename:  "test.db",
+			FrontendURL: "http://localhost:3000",
+			RedisURL:    "",
+		}
+		assert.NoError(t, cfg.Validate())
+	})
+
+	t.Run("invalid redis url", func(t *testing.T) {
+		cfg := AppConfig{
+			GinMode:     "debug",
+			Environment: "development",
+			LogLevel:    "info",
+			LogFormat:   "text",
+			DbFilename:  "test.db",
+			FrontendURL: "http://localhost:3000",
+			RedisURL:    "://invalid",
+		}
+		err := cfg.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "redis_url")
+	})
+}
+
+func TestFormatConfig_Validate(t *testing.T) {
+	t.Run("valid locale", func(t *testing.T) {
+		cfg := FormatConfig{
+			Date: DateFormatConfig{
+				Locale:  "da-DK",
+				Options: DateFormatOptionsConfig{},
+			},
+		}
+		assert.NoError(t, cfg.Validate())
+	})
+
+	t.Run("invalid locale", func(t *testing.T) {
+		cfg := FormatConfig{
+			Date: DateFormatConfig{
+				Locale:  "invalid",
+				Options: DateFormatOptionsConfig{},
+			},
+		}
+		err := cfg.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "date_locale")
+	})
+
+	t.Run("locale with wrong format", func(t *testing.T) {
+		cfg := FormatConfig{
+			Date: DateFormatConfig{
+				Locale:  "en_US",
+				Options: DateFormatOptionsConfig{},
+			},
+		}
+		err := cfg.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "date_locale")
+	})
+}
+
+func TestDateFormatConfig_Validate(t *testing.T) {
+	t.Run("valid locale", func(t *testing.T) {
+		cfg := DateFormatConfig{
+			Locale:  "en-US",
+			Options: DateFormatOptionsConfig{},
+		}
+		assert.NoError(t, cfg.Validate())
+	})
+
+	t.Run("invalid locale", func(t *testing.T) {
+		cfg := DateFormatConfig{
+			Locale:  "foo",
+			Options: DateFormatOptionsConfig{},
+		}
+		err := cfg.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "date_locale")
+	})
+
+	t.Run("locale too short", func(t *testing.T) {
+		cfg := DateFormatConfig{
+			Locale:  "en",
+			Options: DateFormatOptionsConfig{},
+		}
+		err := cfg.Validate()
+		assert.Error(t, err)
+	})
+
+	t.Run("locale too long", func(t *testing.T) {
+		cfg := DateFormatConfig{
+			Locale:  "eng-USA",
+			Options: DateFormatOptionsConfig{},
+		}
+		err := cfg.Validate()
+		assert.Error(t, err)
+	})
+}
+
+func TestRedisURL_Validate(t *testing.T) {
+	t.Run("valid redis url", func(t *testing.T) {
+		ru := RedisURL("redis://localhost:6379/0")
+		assert.NoError(t, ru.Validate())
+	})
+
+	t.Run("valid rediss url", func(t *testing.T) {
+		ru := RedisURL("rediss://localhost:6379/0")
+		assert.NoError(t, ru.Validate())
+	})
+
+	t.Run("valid redis url with password", func(t *testing.T) {
+		ru := RedisURL("redis://:secret@localhost:6379/0")
+		assert.NoError(t, ru.Validate())
+	})
+
+	t.Run("empty string is invalid", func(t *testing.T) {
+		ru := RedisURL("")
+		err := ru.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "not a valid URL")
+	})
+
+	t.Run("invalid scheme", func(t *testing.T) {
+		ru := RedisURL("http://localhost:6379/0")
+		err := ru.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid scheme")
+		assert.Contains(t, err.Error(), "http")
+	})
+
+	t.Run("missing host", func(t *testing.T) {
+		ru := RedisURL("redis:///0")
+		err := ru.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "missing host")
+	})
+
+	t.Run("invalid url format", func(t *testing.T) {
+		ru := RedisURL("://invalid")
+		err := ru.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "not a valid URL")
+	})
+
+	t.Run("tcp address without scheme", func(t *testing.T) {
+		ru := RedisURL("localhost:6379")
+		err := ru.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid scheme")
+	})
 }

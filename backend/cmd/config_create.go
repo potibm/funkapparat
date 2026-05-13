@@ -1,11 +1,10 @@
 package cmd
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	"log/slog"
 
+	"github.com/potibm/funkapparat/internal/app/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -23,7 +22,47 @@ func NewConfigCreateCmd() *cobra.Command {
 			skipConfigValidationAnnotation: "true",
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			const defaultAPIKeyLength = 32
+			const defaultFrontendURL = "https://localhost:3300"
+
+			viper.SetDefault("app.frontend_url", defaultFrontendURL)
+			viper.SetDefault("app.cors_allow_origins", []string{defaultFrontendURL})
+
+			viper.SetDefault("s3_client.access_key_id", "accesskey")
+			viper.SetDefault("s3_client.secret_access_key", "secretkey")
+			viper.SetDefault("s3_client.region", "us-east-1")
+			viper.SetDefault("s3_client.endpoint", "http://localhost:9000")
+			viper.SetDefault("s3_client.use_path_style", true)
+
+			viper.SetDefault("exporter", []config.ExporterConfig{
+				{
+					Name:        "rss_file_exporter",
+					Type:        "rss",
+					Destination: "file",
+					Filename:    "news",
+					Options: map[string]string{
+						"dir": "./exports",
+					},
+					Enabled: false,
+				}, {
+					Name:        "json_file_exporter",
+					Type:        "json",
+					Destination: "file",
+					Filename:    "news",
+					Options: map[string]string{
+						"dir": "./exports",
+					},
+					Enabled: false,
+				}, {
+					Name:        "atom_s3_exporter",
+					Type:        "atom",
+					Destination: "s3",
+					Filename:    "news",
+					Options: map[string]string{
+						"bucket": "my-bucket",
+					},
+					Enabled: false,
+				},
+			})
 
 			filename := configCreateFilename
 
@@ -57,13 +96,4 @@ func NewConfigCreateCmd() *cobra.Command {
 		StringVarP(&configCreateFilename, "output", "o", "config/config.yaml", "Filename for the generated config file")
 
 	return cmd
-}
-
-func generateSecureToken(byteLength int) (string, error) {
-	bytes := make([]byte, byteLength)
-	if _, err := rand.Read(bytes); err != nil {
-		return "", fmt.Errorf("error while generating the token: %w", err)
-	}
-
-	return hex.EncodeToString(bytes), nil
 }
