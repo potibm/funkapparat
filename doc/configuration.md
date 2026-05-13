@@ -19,7 +19,7 @@ You can call the `funkapparat serve` command with the following flags
 -p, --port          int             # the port for the server
 --otel-endpoint     string          # hostname and port for otel
 --db-file           string          # the database file to use (without suffix)
---log-format        string          # log format, any of json, txt
+--log-format        string          # log format, any of json, text
 --log-level         string          # log level, any of debug, info, warn, error
 ```
 
