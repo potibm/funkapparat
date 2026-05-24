@@ -57,7 +57,7 @@ export const MarkdownInput = ({
           value={field.value || ""}
           onChange={field.onChange}
           onBlur={field.onBlur}
-          height={400} // Standardhöhe, kann via props überschrieben werden
+          height={400}
           {...props}
         />
       </Box>
