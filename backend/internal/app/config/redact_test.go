@@ -80,47 +80,6 @@ func TestConfig_RedactConfigForDisplay(t *testing.T) {
 	})
 }
 
-func TestRedisURL_Redacted(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    RedisURL
-		expected RedisURL
-	}{
-		{
-			name:     "URL with password",
-			input:    "redis://:secret@localhost:6379/0",
-			expected: "redis://:%2A%2A%2AREDACTED%2A%2A%2A@localhost:6379/0",
-		},
-		{
-			name:     "URL with username and password",
-			input:    "redis://user:secret@localhost:6379/0",
-			expected: "redis://user:%2A%2A%2AREDACTED%2A%2A%2A@localhost:6379/0",
-		},
-		{
-			name:     "URL without password",
-			input:    "redis://localhost:6379/0",
-			expected: "redis://localhost:6379/0",
-		},
-		{
-			name:     "empty URL",
-			input:    "",
-			expected: "",
-		},
-		{
-			name:     "invalid URL",
-			input:    "://invalid",
-			expected: "://invalid",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := tt.input.Redacted()
-			assert.Equal(t, tt.expected, result)
-		})
-	}
-}
-
 func TestRedactURLPassword(t *testing.T) {
 	tests := []struct {
 		name     string

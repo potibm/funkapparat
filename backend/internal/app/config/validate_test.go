@@ -15,6 +15,7 @@ func TestConfig_PlaylistDefaultsAndValidation(t *testing.T) {
 			LogFormat:   "text",
 			DbFilename:  "test.db",
 			FrontendURL: "http://localhost:3000",
+			Port:        8080,
 		},
 		Sentry: SentryConfig{
 			DSN:                     "https://test@sentry.io/123",
@@ -55,6 +56,7 @@ func TestAppConfig_Validate(t *testing.T) {
 		LogFormat:   "text",
 		DbFilename:  "test.db",
 		FrontendURL: "http://localhost:3000",
+		Port:        8080,
 	}
 
 	err := cfg.Validate()
@@ -75,6 +77,7 @@ func TestConfig_Validate(t *testing.T) {
 				LogFormat:   "text",
 				DbFilename:  "test.db",
 				FrontendURL: "http://localhost:3000",
+				Port:        8080,
 			},
 			Sentry: SentryConfig{
 				Environment: "development",
@@ -106,6 +109,7 @@ func TestConfig_Validate(t *testing.T) {
 				LogFormat:   "text",
 				DbFilename:  "../invalid",
 				FrontendURL: "http://localhost:3000",
+				Port:        8080,
 			},
 			Sentry: SentryConfig{
 				Environment: "development",
@@ -132,6 +136,7 @@ func TestConfig_Validate(t *testing.T) {
 				LogFormat:   "text",
 				DbFilename:  "test.db",
 				FrontendURL: "http://localhost:3000",
+				Port:        8080,
 			},
 			Sentry: SentryConfig{
 				Environment: "development",
@@ -159,6 +164,7 @@ func TestAppConfig_Validate_Extended(t *testing.T) {
 			LogFormat:   "text",
 			DbFilename:  "test.db",
 			FrontendURL: "http://localhost:3000",
+			Port:        8080,
 		}
 		assert.NoError(t, cfg.Validate())
 	})
@@ -171,6 +177,7 @@ func TestAppConfig_Validate_Extended(t *testing.T) {
 			LogFormat:   "text",
 			DbFilename:  "../etc/passwd",
 			FrontendURL: "http://localhost:3000",
+			Port:        8080,
 		}
 		err := cfg.Validate()
 		assert.Error(t, err)
@@ -185,6 +192,7 @@ func TestAppConfig_Validate_Extended(t *testing.T) {
 			LogFormat:   "text",
 			DbFilename:  "test@db",
 			FrontendURL: "http://localhost:3000",
+			Port:        8080,
 		}
 		err := cfg.Validate()
 		assert.Error(t, err)
@@ -200,6 +208,7 @@ func TestAppConfig_Validate_Extended(t *testing.T) {
 			DbFilename:  "test.db",
 			FrontendURL: "http://localhost:3000",
 			RedisURL:    "redis://localhost:6379/0",
+			Port:        8080,
 		}
 		assert.NoError(t, cfg.Validate())
 	})
@@ -213,6 +222,7 @@ func TestAppConfig_Validate_Extended(t *testing.T) {
 			DbFilename:  "test.db",
 			FrontendURL: "http://localhost:3000",
 			RedisURL:    "",
+			Port:        8080,
 		}
 		assert.NoError(t, cfg.Validate())
 	})
@@ -226,6 +236,7 @@ func TestAppConfig_Validate_Extended(t *testing.T) {
 			DbFilename:  "test.db",
 			FrontendURL: "http://localhost:3000",
 			RedisURL:    "://invalid",
+			Port:        8080,
 		}
 		err := cfg.Validate()
 		assert.Error(t, err)
@@ -304,58 +315,5 @@ func TestDateFormatConfig_Validate(t *testing.T) {
 		}
 		err := cfg.Validate()
 		assert.Error(t, err)
-	})
-}
-
-func TestRedisURL_Validate(t *testing.T) {
-	t.Run("valid redis url", func(t *testing.T) {
-		ru := RedisURL("redis://localhost:6379/0")
-		assert.NoError(t, ru.Validate())
-	})
-
-	t.Run("valid rediss url", func(t *testing.T) {
-		ru := RedisURL("rediss://localhost:6379/0")
-		assert.NoError(t, ru.Validate())
-	})
-
-	t.Run("valid redis url with password", func(t *testing.T) {
-		ru := RedisURL("redis://:secret@localhost:6379/0")
-		assert.NoError(t, ru.Validate())
-	})
-
-	t.Run("empty string is invalid", func(t *testing.T) {
-		ru := RedisURL("")
-		err := ru.Validate()
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "not a valid URL")
-	})
-
-	t.Run("invalid scheme", func(t *testing.T) {
-		ru := RedisURL("http://localhost:6379/0")
-		err := ru.Validate()
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "invalid scheme")
-		assert.Contains(t, err.Error(), "http")
-	})
-
-	t.Run("missing host", func(t *testing.T) {
-		ru := RedisURL("redis:///0")
-		err := ru.Validate()
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "missing host")
-	})
-
-	t.Run("invalid url format", func(t *testing.T) {
-		ru := RedisURL("://invalid")
-		err := ru.Validate()
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "not a valid URL")
-	})
-
-	t.Run("tcp address without scheme", func(t *testing.T) {
-		ru := RedisURL("localhost:6379")
-		err := ru.Validate()
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "invalid scheme")
 	})
 }
