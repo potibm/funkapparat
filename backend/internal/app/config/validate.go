@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"net"
 	"regexp"
 
 	"github.com/go-playground/validator/v10"
@@ -51,30 +50,6 @@ func (f *FormatConfig) Validate() error {
 func (f *DateFormatConfig) Validate() error {
 	if !validLocale.MatchString(f.Locale) {
 		return fmt.Errorf("date_locale '%s' is not a valid locale", f.Locale)
-	}
-
-	return nil
-}
-
-func (ru *RedisURL) Validate() error {
-	rString := string(*ru)
-
-	if !ru.IsValid() {
-		return fmt.Errorf("redis_url '%s' is not a valid URL", rString)
-	}
-
-	redisURL := ru.URLObject()
-	if redisURL.Scheme != "redis" && redisURL.Scheme != "rediss" {
-		return fmt.Errorf(
-			"redis_url '%s' has invalid scheme '%s' (expected 'redis' or 'rediss')",
-			rString,
-			redisURL.Scheme,
-		)
-	}
-
-	host, _, err := net.SplitHostPort(redisURL.Host)
-	if err != nil || host == "" {
-		return fmt.Errorf("redis_url '%s' has missing host", rString)
 	}
 
 	return nil

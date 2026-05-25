@@ -23,10 +23,6 @@ func (c Config) RedactConfigForDisplay() Config {
 	return result
 }
 
-func (r RedisURL) Redacted() RedisURL {
-	return RedisURL(redactURLPassword(string(r)))
-}
-
 func redactURLPassword(rawURL string) string {
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
