@@ -41,3 +41,9 @@ overmind s --timeout 10
 ## Documentation
 
 Please refer to the [configuration](doc/configuration.md) and [sync](doc/sync.md) documentation. Further information will be added soon.
+
+## Local Environment
+
+Once the stack is running, you can access the applications via:
+- Funkapparat Admin: https://funkapparat.test
+- Dex IdP: https://dex.funkapparat.test

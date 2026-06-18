@@ -1,0 +1,22 @@
+issuer: https://dex.funkapparat.test
+storage:
+  type: memory
+web:
+  http: 0.0.0.0:5556
+logger:
+  level: debug
+
+staticClients:
+  - id: react-admin-client
+    redirectURIs:
+      - 'https://funkapparat.test/auth-callback'
+      - 'https://funkapparat.test'
+      - 'http://localhost:3300/auth-callback'
+      - 'http://localhost:3300'
+    name: 'React Admin Client'
+    public: true
+
+connectors:
+  - type: mockCallback
+    id: mock
+    name: Mock

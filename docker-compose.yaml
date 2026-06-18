@@ -9,6 +9,11 @@ services:
       - "3305:5080" # Web UI
     volumes:
       - o2_data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.openobserve.rule=Host(`observe.funkapparat.test`)"
+      - "traefik.http.services.openobserve.loadbalancer.server.port=5080"
+      - "traefik.http.routers.openobserve.entrypoints=websecure"
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
@@ -48,6 +53,11 @@ services:
       - redisinsight_data:/data
     depends_on:
       - redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.redisinsight.rule=Host(`redis.funkapparat.test`)"
+      - "traefik.http.services.redisinsight.loadbalancer.server.port=5540"
+      - "traefik.http.routers.redisinsight.entrypoints=websecure"
 
   minio:
     image: minio/minio:latest
@@ -61,6 +71,11 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.minio.rule=Host(`minio.funkapparat.test`)"
+      - "traefik.http.services.minio.loadbalancer.server.port=9001"
+      - "traefik.http.routers.minio.entrypoints=websecure"
 
   minio-init:
     image: minio/mc
@@ -80,3 +95,37 @@ volumes:
   redis_data:
   redisinsight_data:
   minio_data:
+
+  dex:
+    image: ghcr.io/dexidp/dex:v2.40.0
+    container_name: funkapparat_dex
+    ports:
+      - "3308:5556"
+    volumes:
+      - ./infra/dex-config.yaml:/etc/dex/config.docker.yaml
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dex.rule=Host(`dex.funkapparat.test`)"
+      - "traefik.http.services.dex.loadbalancer.server.port=5556"
+      - "traefik.http.routers.dex.entrypoints=websecure"
+
+  traefik:
+    image: traefik:v3.1
+    container_name: funkapparat_traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.filename=/etc/traefik/dynamic.yaml"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080" # Traefik Dashboard (optional)
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./infra/traefik-dynamic.yaml:/etc/traefik/dynamic.yaml:ro"
+      - "./infra/.certs:/certs:ro"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

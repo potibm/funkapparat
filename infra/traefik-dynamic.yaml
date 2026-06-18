@@ -1,0 +1,33 @@
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /certs/local-cert.pem
+        keyFile: /certs/local-key.pem
+
+http:
+  routers:
+    # 1. API: Leite /api an das Backend weiter
+    api-router:
+      rule: "Host(`funkapparat.test`) && PathPrefix(`/api`)"
+      service: backend-service
+      entryPoints:
+        - websecure
+
+    # 2. Frontend: Leite alle anderen Anfragen an das Frontend weiter
+    frontend-router:
+      rule: "Host(`funkapparat.test`)"
+      service: frontend-service
+      entryPoints:
+        - websecure
+
+  services:
+    backend-service:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:3300"
+
+    frontend-service:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:3301"

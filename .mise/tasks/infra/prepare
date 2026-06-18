@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# mise description="Prepares local DNS, certs, and routing (Cross-Platform)"
+
+set -e
+
+DOMAIN="funkapparat.test"
+DEX_DOMAIN="dex.funkapparat.test"
+WILDCARD="*.funkapparat.test"
+CERTS_DIR="infra/.certs"
+
+echo "==> 🚀 Starting local infrastructure setup..."
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  echo "==> 🍎 Detected macOS..."
+
+  echo "==> 🔒 Setting up local Certificate Authority (CA)..."
+  mkcert -install
+
+  if ! command -v dnsmasq &> /dev/null; then
+    echo "==> 📦 Installing dnsmasq..."
+    brew install dnsmasq
+  fi
+
+  DNSMASQ_CONF="/usr/local/etc/dnsmasq.conf"
+  if [[ $(uname -m) == 'arm64' ]]; then
+    DNSMASQ_CONF="/opt/homebrew/etc/dnsmasq.conf"
+  fi
+
+  echo "==> ⚙️  Configuring dnsmasq for $DOMAIN and $WILDCARD..."
+  grep -q "^address=/$DOMAIN/127.0.0.1" "$DNSMASQ_CONF" || echo "address=/$DOMAIN/127.0.0.1" >> "$DNSMASQ_CONF"
+
+  echo "==> 🔄 Restarting dnsmasq..."
+  sudo brew services restart dnsmasq
+
+  echo "==> 🔧 Configuring macOS DNS resolver for $DOMAIN..."
+  sudo mkdir -p /etc/resolver
+  echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/$DOMAIN > /dev/null
+
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  echo "==> 🐧 Detected Linux..."
+
+  echo "==> 🔒 Setting up local Certificate Authority (CA)..."
+  mkcert -install
+
+  echo "==> ⚙️  Checking /etc/hosts for local domains..."
+  if ! grep -q "$DOMAIN" /etc/hosts; then
+    echo "==> Adding domains to /etc/hosts (requires sudo)..."
+    echo "127.0.0.1 $DOMAIN $DEX_DOMAIN observe.funkapparat.test redis.funkapparat.test minio.funkapparat.test" | sudo tee -a /etc/hosts > /dev/null
+  else
+    echo "==> ✅ /etc/hosts is already configured."
+  fi
+
+else
+  echo "❌ Error: Unsupported OS: $OSTYPE"
+fi
+
+echo "==> 🔐 Generating SSL certificates for Traefik..."
+mkdir -p "$CERTS_DIR"
+cd "$CERTS_DIR"
+
+if [ ! -f "local-cert.pem" ] || [ ! -f "local-key.pem" ]; then
+  mkcert -cert-file local-cert.pem -key-file local-key.pem "$DOMAIN" "$WILDCARD"
+  echo "==> ✅ Certificates generated successfully in $CERTS_DIR"
+else
+  echo "==> ✅ Certificates already exist in $CERTS_DIR. Skipping generation."
+fi
+
+echo ""
+echo "🎉 Setup complete! You can now start the infrastructure."

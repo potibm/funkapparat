@@ -67,6 +67,14 @@ type FormatConfig struct {
 	Date DateFormatConfig `json:"date" mapstructure:"date"`
 }
 
+type AuthConfig struct {
+	Type          string `json:"type"      mapstructure:"type"            validate:"required,oneof=oidc"`
+	Name          string `json:"name"      mapstructure:"name"            validate:"required"`
+	AuthorityURL  string `json:"authority" mapstructure:"authority"       validate:"required,url"`
+	ClientID      string `json:"client_id" mapstructure:"client_id"       validate:"required"`
+	SkipTLSVerify bool   `json:"-"         mapstructure:"skip_tls_verify"`
+}
+
 type Config struct {
 	App      AppConfig        `mapstructure:"app"`
 	Sentry   SentryConfig     `mapstructure:"sentry"`
@@ -74,4 +82,5 @@ type Config struct {
 	Exporter []ExporterConfig `mapstructure:"exporter"`
 	S3Client *S3ClientConfig  `mapstructure:"s3_client"`
 	Feed     *FeedConfig      `mapstructure:"feed"`
+	Auth     *AuthConfig      `mapstructure:"auth"            validate:"omitempty"`
 }
