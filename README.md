@@ -59,9 +59,9 @@ Once the stack is running, you can access the applications via:
 
 Please refer to the documentation on
 
-* [configuration](doc/configuration.md)
-* [redis sync](doc/sync.md)
-* [authentication](doc/auth.md)
-* [setting up a global traefik service](doc/global-traefik.md)
+- [configuration](doc/configuration.md)
+- [redis sync](doc/sync.md)
+- [authentication](doc/auth.md)
+- [setting up a global traefik service](doc/global-traefik.md)
 
 Further information will be added soon.
