@@ -64,6 +64,13 @@ func NewConfigCreateCmd() *cobra.Command {
 				},
 			})
 
+			viper.SetDefault("auth", config.AuthConfig{
+				Type:         "oidc",
+				Name:         "Dex",
+				AuthorityURL: "https://dex.funkapparat.test/dex",
+				ClientID:     "react-admin-client",
+			})
+
 			filename := configCreateFilename
 
 			var writeErr error
