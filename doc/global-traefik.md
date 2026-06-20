@@ -89,7 +89,7 @@ http:
     funkapparat-vite-service:
       loadBalancer:
         servers:
-          - url: "http://host.docker.internal:3200"
+          - url: "http://host.docker.internal:3300"
 
 tls:
   certificates:
