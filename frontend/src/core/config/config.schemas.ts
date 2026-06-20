@@ -19,6 +19,14 @@ export const AppConfigSchema = z.object({
     hour: "2-digit",
     minute: "2-digit",
   }),
+  auth: z
+    .object({
+      type: z.enum(["oidc"]),
+      name: z.string(),
+      authority: z.string(),
+      client_id: z.string(),
+    })
+    .optional(),
 });
 
 export type AppConfig = z.infer<typeof AppConfigSchema>;

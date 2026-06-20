@@ -5,6 +5,7 @@ go 1.25.0
 toolchain go1.25.1
 
 require (
+	github.com/MicahParks/keyfunc/v2 v2.1.0
 	github.com/aws/aws-sdk-go-v2 v1.42.0
 	github.com/aws/aws-sdk-go-v2/config v1.32.25
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.24
@@ -18,6 +19,7 @@ require (
 	github.com/glebarez/sqlite v1.11.0
 	github.com/go-playground/validator/v10 v10.30.3
 	github.com/go-viper/mapstructure/v2 v2.5.0
+	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/gorilla/feeds v1.2.0
 	github.com/joho/godotenv v1.5.1
 	github.com/microcosm-cc/bluemonday v1.0.27

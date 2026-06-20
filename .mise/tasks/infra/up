@@ -5,8 +5,9 @@ docker compose up -d --force-recreate --remove-orphans
 
 echo ""
 echo "🚀 --- INFRASTRUCTURE DASHBOARD ---"
-echo "📊 OpenObserve:   http://localhost:3305 (admin@example.com / password123)"
-echo "📊 RedisInsight:  http://localhost:3306" 
-echo "📊 MinIO:         http://localhost:3307 (local-admin / local-super-secret)"
+echo "📊 OpenObserve:   https://observe.funkapparat.test (admin@example.com / password123)"
+echo "📊 RedisInsight:  https://redis.funkapparat.test"
+echo "📊 MinIO:         https://minio.funkapparat.test (local-admin / local-super-secret)"
+echo "🪪 Dex OIDC:      https://dex.funkapparat.test"
 echo "📈 OTel gRPC:     localhost:3317"
 echo "----------------------------------"

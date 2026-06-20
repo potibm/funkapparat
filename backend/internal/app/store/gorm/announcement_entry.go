@@ -6,6 +6,7 @@ import (
 
 type dbAnnouncement struct {
 	GormModel
+	AuditModel
 
 	Title       string
 	Body        string

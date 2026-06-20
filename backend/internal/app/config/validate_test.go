@@ -32,6 +32,12 @@ func TestConfig_PlaylistDefaultsAndValidation(t *testing.T) {
 			AuthorName:      "John Doe",
 			AuthorEmail:     "john.doe@example.com",
 		},
+		Auth: &AuthConfig{
+			Type:         "oidc",
+			Name:         "Dex",
+			AuthorityURL: "https://dex.funkapparat.test",
+			ClientID:     "react-admin-client",
+		},
 		Format: FormatConfig{
 			Date: DateFormatConfig{
 				Locale: "en-US",

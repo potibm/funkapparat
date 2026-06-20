@@ -14,6 +14,7 @@ type AppConfigPublic struct {
 	DateLocale         string                         `json:"date_locale"`
 	DateOptions        config.DateFormatOptionsConfig `json:"date_options"`
 	Sentry             config.SentryConfig            `json:"sentry"`
+	Auth               *config.AuthConfig             `json:"auth,omitempty"`
 }
 
 func (s *Server) handleGetPublicConfig(c *gin.Context) {
@@ -30,5 +31,6 @@ func mapToPublicConfig(cfg *config.Config) AppConfigPublic {
 		Sentry:             cfg.Sentry,
 		DateLocale:         cfg.Format.Date.Locale,
 		DateOptions:        cfg.Format.Date.Options,
+		Auth:               cfg.Auth,
 	}
 }
