@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ConfigContext } from "@core/config/ConfigContext";
 import { AppBootstrapper } from "./Admin";
@@ -66,6 +66,10 @@ function renderWithConfig(config: AppConfig) {
 }
 
 describe("AppBootstrapper", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("renders the admin app", () => {
     renderWithConfig(baseConfig);
 
