@@ -13,7 +13,7 @@ import * as Sentry from "@sentry/react";
 const log = createLogger("Bootstrapper");
 const API_HOST = import.meta.env.VITE_API_HOST ?? "http://localhost:3101";
 
-async function bootstrapApp() {
+export async function bootstrapApp() {
   const rootElement = document.getElementById("root");
   if (!rootElement) throw new Error("Failed to find the root element");
   const root = createRoot(rootElement);
@@ -80,4 +80,6 @@ async function bootstrapApp() {
   }
 }
 
-bootstrapApp();
+if (!import.meta.env.TEST) {
+  bootstrapApp();
+}
