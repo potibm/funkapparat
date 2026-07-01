@@ -26,9 +26,8 @@ vi.mock("./components/auth/OidcLogin", () => ({
 }));
 
 vi.mock("react-admin", async () => {
-  const actual = await vi.importActual<typeof import("react-admin")>(
-    "react-admin",
-  );
+  const actual =
+    await vi.importActual<typeof import("react-admin")>("react-admin");
   return {
     ...actual,
     Admin: vi.fn(({ children }) => (

@@ -4,9 +4,10 @@ import * as Sentry from "@sentry/react";
 import { configureOidc } from "@admin/providers/authProvider";
 
 vi.mock("react-dom/client", async () => {
-  const actual = await vi.importActual<typeof import("react-dom/client")>(
-    "react-dom/client",
-  );
+  const actual =
+    await vi.importActual<typeof import("react-dom/client")>(
+      "react-dom/client",
+    );
   return {
     ...actual,
     createRoot: vi.fn(),
@@ -14,9 +15,8 @@ vi.mock("react-dom/client", async () => {
 });
 
 vi.mock("@sentry/react", async () => {
-  const actual = await vi.importActual<typeof import("@sentry/react")>(
-    "@sentry/react",
-  );
+  const actual =
+    await vi.importActual<typeof import("@sentry/react")>("@sentry/react");
   return {
     ...actual,
     isInitialized: vi.fn(),
@@ -219,9 +219,7 @@ describe("bootstrapApp", () => {
     const rendered = mockRender.mock.calls[0][0];
     expect(rendered.type).toBe("div");
     expect(rendered.props.children).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ type: "h2" }),
-      ]),
+      expect.arrayContaining([expect.objectContaining({ type: "h2" })]),
     );
   });
 
@@ -242,9 +240,7 @@ describe("bootstrapApp", () => {
     const rendered = mockRender.mock.calls[0][0];
     expect(rendered.type).toBe("div");
     expect(rendered.props.children).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ type: "h2" }),
-      ]),
+      expect.arrayContaining([expect.objectContaining({ type: "h2" })]),
     );
   });
 
