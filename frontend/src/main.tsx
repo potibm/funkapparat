@@ -19,17 +19,21 @@ export async function bootstrapApp() {
   const root = createRoot(rootElement);
 
   try {
-    // 1. Fetch config and validate
     const controller = new AbortController();
     const timeoutId = globalThis.setTimeout(() => controller.abort(), 10000);
 
-    const res = await fetch(`${API_HOST}/api/config`, {
-      signal: controller.signal,
-    });
-    if (!res.ok) throw new Error(`Config error: ${res.statusText}`);
+    let data: unknown;
 
-    const data = await res.json();
-    globalThis.clearTimeout(timeoutId);
+    // 1. Fetch config and validate
+    try {
+      const res = await fetch(`${API_HOST}/api/config`, {
+        signal: controller.signal,
+      });
+      if (!res.ok) throw new Error(`Config error: ${res.statusText}`);
+      data = await res.json();
+    } finally {
+      globalThis.clearTimeout(timeoutId);
+    }
 
     const config = AppConfigSchema.parse(data);
     log.debug("Config loaded:", config);
