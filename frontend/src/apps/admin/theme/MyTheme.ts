@@ -7,12 +7,10 @@ export const MyTheme: ThemeOptions = {
     ...defaultTheme.palette,
     mode: "light",
     primary: {
-      // Ein sehr dunkles Schiefergrau für perfekte Lesbarkeit auf hellem Grund
       main: "#1E293B",
       contrastText: "#FFFFFF",
     },
     secondary: {
-      // Ein klares, technisches Blau als Sekundärfarbe
       main: "#3B82F6",
       contrastText: "#FFFFFF",
     },
@@ -27,12 +25,11 @@ export const MyTheme: ThemeOptions = {
   },
   components: {
     ...defaultTheme.components,
-    // HIER SETZEN WIR DEN AKZENT FÜR DEN LIGHT MODE
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: "#CCFF00", // Der knallige Limetten-Header
-          color: "#000000", // Schwarzer Text/Icons im Header für den Kontrast
+          backgroundColor: "#CCFF00",
+          color: "#000000",
         },
       },
     },
@@ -54,13 +51,12 @@ export const MyDarkTheme: ThemeOptions = {
     ...defaultTheme.palette,
     mode: "dark",
     primary: {
-      main: "#CCFF00", // Limette als Hauptfarbe im Dark Mode
+      main: "#CCFF00",
       light: "#D9FF33",
       dark: "#99CC00",
-      contrastText: "#000000", // WICHTIG: Schwarzer Text auf den Limetten-Buttons
+      contrastText: "#000000",
     },
     secondary: {
-      // Violett ist weg. Wir nutzen ein strahlendes Cyan als Kontrast zur Limette
       main: "#00E5FF",
       contrastText: "#000000",
     },
@@ -99,10 +95,10 @@ export const MyDarkTheme: ThemeOptions = {
         },
         root: {
           backgroundColor: "rgba(15, 23, 42, 0.6)",
-          border: "1px solid rgba(204, 255, 0, 0.3)", // Dezent limettengrüner Rand
+          border: "1px solid rgba(204, 255, 0, 0.3)",
         },
         label: {
-          color: "#CCFF00", // Limettengrüner Text
+          color: "#CCFF00",
         },
       },
     },
