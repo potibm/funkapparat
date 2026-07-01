@@ -30,7 +30,7 @@ export const ScheduleEntriesList = () => {
 
   return (
     <List
-      title="Annoucements"
+      title="Announcements"
       sort={{ field: "id", order: "DESC" }}
       actions={<ListActions />}
       filters={announcementFilters}
