@@ -15,6 +15,11 @@ const dummyConfig: AppConfig = {
     replay_error_sample_rate: 1,
   },
   date_locale: "en-US",
+  date_options: {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  },
 };
 
 describe("useAppConfig", () => {
