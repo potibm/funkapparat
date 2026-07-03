@@ -244,11 +244,14 @@ describe("bootstrapApp", () => {
     );
   });
 
-  it("throws when root element is missing", async () => {
+  it("renders error UI when root element is missing", async () => {
     cleanupDom();
 
-    await expect(bootstrapApp()).rejects.toThrow(
+    await bootstrapApp();
+
+    expect(document.body.innerHTML).toContain(
       "Failed to find the root element",
     );
+    expect(mockRender).not.toHaveBeenCalled();
   });
 });
