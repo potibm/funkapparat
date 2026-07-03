@@ -11,11 +11,21 @@ import { configureOidc } from "@admin/providers/authProvider.ts";
 import * as Sentry from "@sentry/react";
 
 const log = createLogger("Bootstrapper");
-const API_HOST = import.meta.env.VITE_API_HOST ?? "http://localhost:3101";
+const API_HOST = import.meta.env.VITE_API_HOST ?? "http://localhost:310";
 
 export async function bootstrapApp() {
   const rootElement = document.getElementById("root");
-  if (!rootElement) throw new Error("Failed to find the root element");
+  if (!rootElement) {
+    document.body.innerHTML = `
+      <div style="padding: 20px; color: red; font-family: sans-serif;">
+        <h2>System Configuration Error</h2>
+        <pre>Failed to find the root element in index.html</pre>
+      </div>
+    `;
+    log.error("Bootstrap failed: Root element missing");
+    return;
+  }
+
   const root = createRoot(rootElement);
 
   try {
