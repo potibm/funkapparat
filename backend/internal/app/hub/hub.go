@@ -164,7 +164,7 @@ func (s *Server) setupRouter() (*gin.Engine, error) {
 	admin.DELETE(pathAnnouncementsWithID, s.deleteAnnouncement)
 
 	r.NoRoute(func(c *gin.Context) {
-		if !strings.HasPrefix(c.Request.RequestURI, "/api") && !strings.Contains(c.Request.RequestURI, ".") {
+		if !strings.HasPrefix(c.Request.URL.Path, "/api") && !strings.Contains(c.Request.URL.Path, ".") {
 			file, _ := s.staticFiles.ReadFile("assets/index.html")
 			c.Data(
 				http.StatusOK,
